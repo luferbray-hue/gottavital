@@ -24,13 +24,14 @@
   .hero h1{font-size:clamp(2.5rem, 8vw, 5rem);line-height:1;margin-bottom:1.5rem;letter-spacing:-2px}
   .hero p{font-size:1.2rem;color:var(--muted);max-width:600px;margin-bottom:2rem}
   
-  .btn-main{padding:1rem 2.5rem;border-radius:50px;background:var(--grad);color:white;text-decoration:none;font-weight:700;transition:transform 0.3s;border:none;cursor:pointer}
+  .btn-main{padding:1rem 2.5rem;border-radius:50px;background:var(--grad);color:white;text-decoration:none;font-weight:700;transition:transform 0.3s;border:none;cursor:pointer;display:inline-block}
   .btn-main:hover{transform:scale(1.05)}
+  .btn-main:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
   .container{max-width:1100px;margin:0 auto;padding:4rem 1.5rem}
   .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;margin-top:2rem}
 
-  .card{background:var(--card);padding:2rem;border-radius:24px;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s;position:relative;overflow:hidden}
+  .card{background:var(--card);padding:2rem;border-radius:24px;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s;position:relative;cursor:pointer}
   .card:hover{border-color:var(--cyan);transform:translateY(-5px)}
   .card h3{font-size:1.5rem;margin:1rem 0}
   .card .precio{font-size:1.8rem;font-weight:700;color:var(--cyan);margin-bottom:1rem;display:block}
@@ -40,16 +41,18 @@
   .qty-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--muted);background:none;color:white;cursor:pointer;font-size:1.2rem}
   .qty-val{font-weight:700;font-size:1.2rem;min-width:20px;text-align:center}
 
-  .check-box{position:absolute;top:1.5rem;right:1.5rem;width:28px;height:28px;border:2px solid var(--muted);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.3s}
+  .check-box{position:absolute;top:1.5rem;right:1.5rem;width:28px;height:28px;border:2px solid var(--muted);border-radius:8px;display:flex;align-items:center;justify-content:center;transition:0.3s}
+  .card.selected{border-color:var(--cyan);background:rgba(0,229,255,0.02)}
   .card.selected .check-box{background:var(--cyan);border-color:var(--cyan)}
   .card.selected .check-box::after{content:'✓';color:var(--dark);font-weight:900}
 
-  /* Cotizador lateral */
   .resumen-fixed{position:sticky;top:100px;background:var(--card);padding:2rem;border-radius:24px;border:1px solid var(--cyan);height:fit-content}
   .resumen-linea{display:flex;justify-content:space-between;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(255,255,255,0.05)}
   .total-box{margin-top:1.5rem;padding-top:1.5rem;border-top:2px solid var(--cyan);display:flex;justify-content:space-between;font-size:1.5rem;font-weight:700}
   
-  .input-datos{width:100%;padding:0.8rem;margin-bottom:0.8rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:white;font-family:'Satoshi',sans-serif}
+  /* Inputs de datos */
+  .input-datos{width:100%;padding:0.8rem;margin-bottom:0.8rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:white;font-family:'Satoshi',sans-serif;outline:none}
+  .input-datos:focus{border-color:var(--cyan)}
 
   @media (max-width: 768px){
     .grid-main{display:flex;flex-direction:column}
@@ -67,7 +70,7 @@
 
 <section class="hero">
   <h1>Sueroterapia <br><span style="color:var(--cyan)">a Domicilio</span></h1>
-  <p>Recupera tu energía y vitalidad en la comodidad de tu hogar en Medellín. Cotiza tu suero ideal ahora.</p>
+  <p>Recupera tu energía en Medellín. Elige tu suero y agendamos tu visita.</p>
   <a href="#cotizador" class="btn-main">Armar mi pedido</a>
 </section>
 
@@ -75,21 +78,20 @@
   <div style="display:grid; grid-template-columns: 1fr 350px; gap:2rem;" class="grid-main">
     
     <div>
-      <h2 style="font-size:2.5rem; margin-bottom:2rem">Elige tus Sueros 💧</h2>
+      <h2 style="font-size:2.5rem; margin-bottom:2rem">Nuestros Sueros 💧</h2>
       <div id="productos-grid" class="grid"></div>
     </div>
 
     <aside>
       <div class="resumen-fixed">
-        <h3>📋 Resumen</h3>
+        <h3>📋 Resumen de Pedido</h3>
         
         <div style="margin: 1.5rem 0; padding: 1rem; background:rgba(255,255,255,0.03); border-radius:15px; border:1px dashed var(--cyan)">
-          <p style="font-size:0.8rem; color:var(--cyan); margin-bottom:0.5rem; font-weight:700">TUS DATOS:</p>
-          <input type="text" id="cliente-nombre" class="input-datos" placeholder="Tu nombre completo">
-          <input type="text" id="cliente-sector" class="input-datos" placeholder="Barrio (ej: El Poblado)">
+          <input type="text" id="cliente-nombre" class="input-datos" placeholder="Tu nombre">
+          <input type="text" id="cliente-sector" class="input-datos" placeholder="Sector / Barrio">
         </div>
 
-        <div id="resumen-lineas" style="margin-top:1rem"></div>
+        <div id="resumen-lineas"></div>
         
         <div class="total-box">
           <span>Total</span>
@@ -97,7 +99,7 @@
         </div>
 
         <button id="btn-cotizar" class="btn-main" style="width:100%; margin-top:1.5rem" disabled>
-          Pedir por WhatsApp
+          Enviar a WhatsApp
         </button>
       </div>
     </aside>
@@ -109,12 +111,12 @@
 const WA = "573225625668";
 
 const productos = [
-  {id:'energia',   emoji:'⚡', nombre:'Energía & Vitalidad',      desc:'Complejo B y Vitamina C para activar tu día.', precio:120000},
-  {id:'inmune',    emoji:'🛡️', nombre:'Refuerzo Inmune',           desc:'Altas dosis de Vitamina C y Zinc para tus defensas.', precio:120000},
-  {id:'belleza',   emoji:'✨', nombre:'Glow & Belleza',            desc:'Biotina y Colágeno para piel, cabello y uñas.', precio:120000},
-  {id:'deportivo', emoji:'🏃', nombre:'Recuperación Deportiva',    desc:'Aminoácidos y electrolitos post-entreno.', precio:120000},
-  {id:'hidratacion',emoji:'💧', nombre:'Hidratación Express',      desc:'Reposición inmediata de líquidos y minerales.', precio:120000},
-  {id:'mental',    emoji:'🧠', nombre:'Enfoque Mental',            desc:'Magnesio y antioxidantes para tu cerebro.', precio:120000}
+  {id:'energia',   emoji:'⚡', nombre:'Energía & Vitalidad',      desc:'Complejo B y Vitamina C.', precio:120000},
+  {id:'inmune',    emoji:'🛡️', nombre:'Refuerzo Inmune',           desc:'Vitamina C y Zinc.', precio:120000},
+  {id:'belleza',   emoji:'✨', nombre:'Glow & Belleza',            desc:'Biotina y Colágeno.', precio:120000},
+  {id:'deportivo', emoji:'🏃', nombre:'Recuperación Deportiva',    desc:'Aminoácidos y electrolitos.', precio:120000},
+  {id:'hidratacion',emoji:'💧', nombre:'Hidratación Express',      desc:'Reposición inmediata.', precio:120000},
+  {id:'mental',    emoji:'🧠', nombre:'Enfoque Mental',            desc:'Magnesio y antioxidantes.', precio:120000}
 ];
 
 let estado = {};
@@ -164,7 +166,7 @@ function actualizarResumen() {
   const btn = document.getElementById('btn-cotizar');
 
   if(sel.length === 0) {
-    lineas.innerHTML = '<p style="color:var(--muted); text-align:center">Selecciona un suero para cotizar</p>';
+    lineas.innerHTML = '<p style="color:var(--muted); text-align:center; padding:1rem">Selecciona tus sueros</p>';
     totalEl.textContent = '$0';
     btn.disabled = true;
     return;
@@ -176,7 +178,7 @@ function actualizarResumen() {
     total += sub;
     return `
       <div class="resumen-linea">
-        <span>${p.emoji} ${p.nombre} ${estado[p.id].qty > 1 ? 'x'+estado[p.id].qty : ''}</span>
+        <span>${p.nombre} ${estado[p.id].qty > 1 ? 'x'+estado[p.id].qty : ''}</span>
         <span>${fmt(sub)}</span>
       </div>
     `;
@@ -186,21 +188,21 @@ function actualizarResumen() {
   btn.disabled = false;
 
   btn.onclick = () => {
-    // CAPTURA DE DATOS
-    const nombreCli = document.getElementById('cliente-nombre').value || "(No indicado)";
-    const sectorCli = document.getElementById('cliente-sector').value || "(No indicado)";
+    const nombre = document.getElementById('cliente-nombre').value || "No especificado";
+    const sector = document.getElementById('cliente-sector').value || "No especificado";
 
-    const lineasTxt = sel.map(p => 
-      `• ${p.nombre}${estado[p.id].qty > 1 ? ' x' + estado[p.id].qty : ''}: ${fmt(p.precio * estado[p.id].qty)}`
+    const pedidoTxt = sel.map(p => 
+      `- ${p.nombre}${estado[p.id].qty > 1 ? ' (x' + estado[p.id].qty + ')' : ''}`
     ).join('\n');
 
     const msg = encodeURIComponent(
       `¡Hola GottaVital! 💧\n\n` +
-      `*CLIENTE:* ${nombreCli}\n` +
-      `*UBICACIÓN:* ${sectorCli}\n\n` +
-      `*PEDIDO:* \n${lineasTxt}\n\n` +
+      `*NUEVO PEDIDO*\n` +
+      `👤 *Nombre:* ${nombre}\n` +
+      `📍 *Sector:* ${sector}\n\n` +
+      `*SUEROS:* \n${pedidoTxt}\n\n` +
       `*TOTAL:* ${fmt(total)}\n\n` +
-      `Me gustaría agendar una cita.`
+      `¿Me pueden confirmar disponibilidad?`
     );
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
@@ -208,6 +210,5 @@ function actualizarResumen() {
 
 render();
 </script>
-
 </body>
 </html>
