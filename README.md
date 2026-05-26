@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GottaVital - Sueroterapia a Domicilio Medellín</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --cyan:#00E5FF;--violet:#7C3AED;--lime:#AAFF00;--pink:#FF3CAC;
+    --dark:#0A0A0F;--card:#13131A;
+    --text:#F0F0FF;--muted:#8888AA;
+    --grad:linear-gradient(135deg,#00E5FF,#7C3AED,#FF3CAC)
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Satoshi',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
+  h1,h2,h3{font-family:'Clash Display',sans-serif}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(10,10,15,0.85);border-bottom:1px solid rgba(255,255,255,0.05)}
+  .logo{font-family:'Clash Display',sans-serif;font-size:1.4rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-links{display:flex;gap:2rem;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .2s}
+  .nav-links a:hover{color:var(--cyan)}
+  .nav-cta{background:var(--grad);color:#fff;border:none;padding:.6rem 1.5rem;border-radius:50px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s}
+  .nav-cta:hover{opacity:.85}
+
+  .hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 70% 50%,rgba(124,58,237,.25) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(0,229,255,.15) 0%,transparent 60%)}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px}
+  .hero-content{position:relative;max-width:700px}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);padding:.4rem 1rem;border-radius:50px;font-size:.8rem;color:var(--cyan);margin-bottom:1.5rem}
+  .hero-badge span{width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+  h1{font-size:clamp(2.8rem,6vw,5rem);line-height:1.05;margin-bottom:1.5rem;font-weight:700}
+  .gradient-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.15rem;color:var(--muted);line-height:1.7;max-width:500px;margin-bottom:2.5rem}
+  .hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+  .btn-primary{background:var(--grad);color:#fff;border:none;padding:.9rem 2rem;border-radius:50px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;display:inline-block}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,.4)}
+  .btn-outline{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.2);padding:.9rem 2rem;border-radius:50px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:border-color .2s;text-decoration:none;display:inline-block}
+  .btn-outline:hover{border-color:var(--cyan)}
+  .hero-visual{position:absolute;right:-5%;top:50%;transform:translateY(-50%);width:45%;max-width:500px;opacity:.9}
+  .drip-circle{position:relative;width:100%;aspect-ratio:1;background:radial-gradient(circle at 40% 35%,rgba(0,229,255,.2),rgba(124,58,237,.15),transparent 70%);border-radius:50%;border:1px solid rgba(255,255,255,.08)}
+  .drip-inner{position:absolute;inset:15%;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid rgba(255,255,255,.06)}
+  .drip-icon{font-size:4rem;margin-bottom:.5rem}
+  .drip-label{font-family:'Clash Display',sans-serif;font-size:1.1rem;color:var(--cyan)}
+  .float-tag{position:absolute;background:var(--card);border:1px solid rgba(255,255,255,.1);padding:.6rem 1rem;border-radius:12px;font-size:.8rem;white-space:nowrap}
+  .ft1{top:15%;left:5%;color:var(--lime);border-color:rgba(170,255,0,.3)}
+  .ft2{bottom:20%;left:0;color:var(--pink);border-color:rgba(255,60,172,.3)}
+  .ft3{top:10%;right:5%;color:var(--cyan);border-color:rgba(0,229,255,.3)}
+
+  .stats{padding:3rem 2rem;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+  .stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+  .stat-num{font-family:'Clash Display',sans-serif;font-size:2.5rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat-lbl{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+
+  section{padding:6rem 2rem}
+  .container{max-width:1100px;margin:0 auto}
+  .section-label{font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem}
+  .section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;line-height:1.2;margin-bottom:1rem}
+  .section-sub{color:var(--muted);font-size:1.05rem;line-height:1.7;max-width:550px}
+
+  .services-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;gap:2rem;flex-wrap:wrap}
+  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+  .service-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:2rem;position:relative;overflow:hidden;transition:transform .25s,border-color .25s;cursor:pointer}
+  .service-card:hover{transform:translateY(-5px);border-color:rgba(0,229,255,.3)}
+  .service-card::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .25s}
+  .service-card:hover::before{opacity:.04}
+  .sc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:1.2rem}
+  .sc-cyan{background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.2)}
+  .sc-violet{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.2)}
+  .sc-lime{background:rgba(170,255,0,.1);border:1px solid rgba(170,255,0,.2)}
+  .sc-pink{background:rgba(255,60,172,.1);border:1px solid rgba(255,60,172,.2)}
+  .sc-amber{background:rgba(255,180,0,.1);border:1px solid rgba(255,180,0,.2)}
+  .sc-teal{background:rgba(0,200,180,.1);border:1px solid rgba(0,200,180,.2)}
+  .service-card h3{font-size:1.15rem;margin-bottom:.6rem;font-weight:600}
+  .service-card p{font-size:.9rem;color:var(--muted);line-height:1.6}
+  .service-tag{display:inline-block;margin-top:1rem;font-size:.75rem;padding:.3rem .8rem;border-radius:50px;font-weight:700}
+  .tag-cyan{background:rgba(0,229,255,.1);color:var(--cyan)}
+  .tag-violet{background:rgba(124,58,237,.15);color:#A78BFA}
+  .tag-lime{background:rgba(170,255,0,.1);color:var(--lime)}
+  .tag-pink{background:rgba(255,60,172,.1);color:var(--pink)}
+
+  /* ===== COTIZADOR ===== */
+  #cotizador{background:rgba(255,255,255,.01)}
+  .cotizador-wrap{display:grid;grid-template-columns:1fr 380px;gap:2.5rem;align-items:start;margin-top:3rem}
+  .productos-lista{display:flex;flex-direction:column;gap:.8rem}
+  .prod-item{background:var(--card);border:2px solid rgba(255,255,255,.06);border-radius:16px;padding:1.1rem 1.2rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:border-color .2s,background .2s;user-select:none}
+  .prod-item:hover{border-color:rgba(0,229,255,.25);background:rgba(0,229,255,.03)}
+  .prod-item.selected{border-color:var(--cyan);background:rgba(0,229,255,.07)}
+  .prod-check{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s,border-color .2s;font-size:.75rem}
+  .prod-item.selected .prod-check{background:var(--cyan);border-color:var(--cyan);color:#000}
+  .prod-emoji{font-size:1.5rem;flex-shrink:0}
+  .prod-info{flex:1}
+  .prod-info strong{display:block;font-size:.95rem;font-weight:600;margin-bottom:.1rem}
+  .prod-info span{font-size:.8rem;color:var(--muted)}
+  .prod-precio{font-family:'Clash Display',sans-serif;font-size:1rem;font-weight:700;color:var(--cyan);flex-shrink:0}
+  .prod-qty{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+  .qty-btn{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;line-height:1}
+  .qty-btn:hover{background:rgba(255,255,255,.1)}
+  .qty-num{font-size:.9rem;font-weight:700;min-width:18px;text-align:center}
+
+  .resumen-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem;position:sticky;top:100px}
+  .resumen-card h3{font-size:1.2rem;margin-bottom:1.2rem;font-weight:700}
+  .resumen-lineas{display:flex;flex-direction:column;gap:.6rem;min-height:80px;margin-bottom:1.2rem}
+  .resumen-linea{display:flex;justify-content:space-between;font-size:.88rem;color:var(--muted)}
+  .resumen-linea span:last-child{color:var(--text);font-weight:500}
+  .resumen-empty{font-size:.85rem;color:var(--muted);font-style:italic}
+  .resumen-divider{border:none;border-top:1px solid rgba(255,255,255,.08);margin:1rem 0}
+  .resumen-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+  .resumen-total span:first-child{font-size:1rem;font-weight:600}
+  .resumen-total-num{font-family:'Clash Display',sans-serif;font-size:1.8rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .domicilio-note{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:.7rem 1rem;font-size:.8rem;color:var(--cyan);margin-bottom:1.2rem}
+  .wa-btn-cot{display:flex;align-items:center;justify-content:center;gap:.6rem;background:#25D366;color:#fff;padding:.9rem;border-radius:14px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:.95rem;text-decoration:none;width:100%;transition:transform .2s,box-shadow .2s;border:none;cursor:pointer}
+  .wa-btn-cot:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,211,102,.35)}
+  .wa-btn-cot svg{width:20px;height:20px;fill:white;flex-shrink:0}
+  .wa-btn-cot:disabled,.wa-btn-cot[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3.5rem}
+  .step{text-align:center;padding:2rem 1.5rem}
+  .step-num{width:56px;height:56px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:1.3rem;font-weight:700;margin:0 auto 1.2rem;color:#fff}
+  .step h3{font-size:1.1rem;margin-bottom:.6rem}
+  .step p{font-size:.9rem;color:var(--muted);line-height:1.6}
+
+  .benefits-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-top:3rem}
+  .benefit-list{display:flex;flex-direction:column;gap:1.2rem}
+  .benefit-item{display:flex;gap:1rem;align-items:flex-start;padding:1.2rem;background:var(--card);border-radius:14px;border:1px solid rgba(255,255,255,.06);transition:border-color .2s}
+  .benefit-item:hover{border-color:rgba(0,229,255,.2)}
+  .bi-icon{font-size:1.5rem;flex-shrink:0;margin-top:.1rem}
+  .bi-text h4{font-size:1rem;margin-bottom:.3rem;font-weight:600}
+  .bi-text p{font-size:.85rem;color:var(--muted);line-height:1.5}
+  .visual-card{background:var(--card);border-radius:24px;padding:2.5rem;border:1px solid rgba(255,255,255,.08);text-align:center;position:relative;overflow:hidden}
+  .vc-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,229,255,.08) 0%,transparent 70%)}
+  .big-drop{font-size:8rem;position:relative;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .vc-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem;position:relative}
+  .vc-stat{background:rgba(255,255,255,.04);border-radius:12px;padding:1rem;text-align:center;border:1px solid rgba(255,255,255,.06)}
+  .vc-stat-num{font-family:'Clash Display',sans-serif;font-size:1.6rem;font-weight:700;color:var(--cyan)}
+  .vc-stat-lbl{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+
+  .cobertura-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:2.5rem}
+  .ciudad-pill{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1.2rem;display:flex;align-items:center;gap:.7rem;transition:border-color .2s}
+  .ciudad-pill:hover{border-color:rgba(0,229,255,.3)}
+  .ciudad-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+  .ciudad-pill span{font-size:.9rem;font-weight:500}
+
+  .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem}
+  .testi-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:1.8rem;transition:border-color .2s}
+  .testi-card:hover{border-color:rgba(124,58,237,.3)}
+  .stars{color:#FFD700;font-size:1rem;margin-bottom:1rem;letter-spacing:2px}
+  .testi-text{font-size:.95rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem;font-style:italic}
+  .testi-author{display:flex;align-items:center;gap:.8rem}
+  .avatar{width:40px;height:40px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff}
+  .author-info strong{display:block;font-size:.9rem;font-weight:600}
+  .author-info span{font-size:.8rem;color:var(--muted)}
+
+  .cta-box{background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(124,58,237,.12),rgba(255,60,172,.07));border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:4rem 3rem;text-align:center;max-width:800px;margin:0 auto;position:relative;overflow:hidden}
+  .cta-glow{position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.2) 0%,transparent 70%);pointer-events:none}
+  .cta-box h2{font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:1rem;position:relative}
+  .cta-box p{color:var(--muted);font-size:1.05rem;margin-bottom:2.5rem;max-width:500px;margin-left:auto;margin-right:auto;position:relative}
+  .cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative}
+  .whatsapp-btn{display:inline-flex;align-items:center;gap:.7rem;background:#25D366;color:#fff;padding:.9rem 2rem;border-radius:50px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;transition:transform .2s,box-shadow .2s;border:none;cursor:pointer}
+  .whatsapp-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,211,102,.35)}
+  .wa-icon{width:22px;height:22px;fill:white}
+  .phone-btn{display:inline-flex;align-items:center;gap:.7rem;background:transparent;color:var(--text);padding:.9rem 2rem;border-radius:50px;font-family:'Satoshi',sans-serif;font-weight:700;font-size:1rem;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:border-color .2s;text-decoration:none}
+  .phone-btn:hover{border-color:var(--cyan)}
+
+  .wa-float{position:fixed;bottom:2rem;right:2rem;z-index:999;background:#25D366;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.5);text-decoration:none;transition:transform .2s;animation:wabounce 2s ease-in-out infinite}
+  @keyframes wabounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .wa-float:hover{animation:none;transform:scale(1.1)}
+  .wa-float svg{width:30px;height:30px;fill:white}
+
+  footer{padding:3rem 2rem;border-top:1px solid rgba(255,255,255,.06);text-align:center}
+  .footer-inner{max-width:1100px;margin:0 auto}
+  .footer-logo{font-family:'Clash Display',sans-serif;font-size:1.5rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem}
+  footer p{color:var(--muted);font-size:.85rem;margin-top:.5rem}
+  .footer-links{display:flex;justify-content:center;gap:2rem;margin:1.5rem 0;list-style:none;flex-wrap:wrap}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s}
+  .footer-links a:hover{color:var(--cyan)}
+  .footer-contact{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin:1rem 0}
+  .footer-contact a{color:var(--cyan);text-decoration:none;font-size:.9rem;font-weight:500}
+
+  @media(max-width:800px){
+    .hero-visual{display:none}
+    .stats-inner{grid-template-columns:repeat(2,1fr)}
+    .benefits-layout{grid-template-columns:1fr}
+    .cotizador-wrap{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .cta-box{padding:2.5rem 1.5rem}
+    h1{font-size:2.4rem}
+    .resumen-card{position:static}
+  }
+</style>
+</head>
+<body>
+
+<a href="https://wa.me/573225625668?text=Hola%20GottaVital,%20quiero%20información%20sobre%20sueroterapia%20a%20domicilio" class="wa-float" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<nav>
+  <div class="logo">💧 GottaVital</div>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#cotizador">Cotizar</a></li>
+    <li><a href="#cobertura">Cobertura</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
+  </ul>
+  <button class="nav-cta" onclick="window.open('https://wa.me/573225625668?text=Hola%20GottaVital,%20quiero%20reservar%20un%20suero','_blank')">Reservar ahora</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span></span> Servicio disponible en Medellín y Área Metro</div>
+    <h1>Recarga tu<br><span class="gradient-text">energía vital</span><br>en casa</h1>
+    <p>Sueroterapia intravenosa a domicilio en Medellín y el Área Metropolitana. Vitaminas, hidratación y bienestar premium — sin salir de tu hogar, con personal médico certificado.</p>
+    <div class="hero-btns">
+      <a href="#cotizador" class="btn-primary">Cotizar mi suero</a>
+      <a href="#servicios" class="btn-outline">Ver tratamientos</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="drip-circle">
+      <div class="drip-inner">
+        <div class="drip-icon">💧</div>
+        <div class="drip-label">GottaVital</div>
+      </div>
+      <div class="float-tag ft1">✦ Vitamina C & B12</div>
+      <div class="float-tag ft2">🏠 100% a domicilio</div>
+      <div class="float-tag ft3">⚡ En 60 min</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div><div class="stat-num">500+</div><div class="stat-lbl">Pacientes satisfechos</div></div>
+    <div><div class="stat-num">60min</div><div class="stat-lbl">Tiempo de llegada</div></div>
+    <div><div class="stat-num">100%</div><div class="stat-lbl">Personal certificado</div></div>
+    <div><div class="stat-num">24/7</div><div class="stat-lbl">Disponibilidad</div></div>
+  </div>
+</div>
+
+<!-- SERVICIOS -->
+<section id="servicios" style="background:var(--dark)">
+  <div class="container">
+    <div class="services-header">
+      <div>
+        <div class="section-label">Nuestros tratamientos</div>
+        <h2 class="section-title">Sueros diseñados<br>para cada necesidad</h2>
+      </div>
+      <p class="section-sub">Cada suero está formulado con ingredientes de grado médico y aplicado por enfermeros certificados en Medellín.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-cyan">⚡</div>
+        <h3>Energía & Vitalidad</h3>
+        <p>Complejo B, Magnesio y Taurina. Ideal para combatir el cansancio crónico y mejorar el rendimiento diario.</p>
+        <span class="service-tag tag-cyan">Más popular</span>
+      </div>
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-violet">🛡️</div>
+        <h3>Refuerzo Inmune</h3>
+        <p>Vitamina C en altas dosis, Zinc y antioxidantes. Fortalece tus defensas naturales rápidamente.</p>
+        <span class="service-tag tag-violet">Preventivo</span>
+      </div>
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-lime">✨</div>
+        <h3>Glow & Belleza</h3>
+        <p>Glutatión, Vitamina C y Biotina para una piel luminosa, uñas fuertes y cabello brillante desde adentro.</p>
+        <span class="service-tag tag-lime">Antiedad</span>
+      </div>
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-pink">🏃</div>
+        <h3>Recuperación Deportiva</h3>
+        <p>Aminoácidos esenciales, electrolitos y antioxidantes. Recuperación muscular acelerada post-entrenamiento.</p>
+        <span class="service-tag tag-pink">Deportivo</span>
+      </div>
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-amber">💦</div>
+        <h3>Hidratación Total</h3>
+        <p>Solución salina enriquecida con electrolitos. Perfecta para resaca, deshidratación o días de mucho calor.</p>
+        <span class="service-tag tag-cyan">Rápido</span>
+      </div>
+      <div class="service-card" onclick="document.getElementById('cotizador').scrollIntoView({behavior:'smooth'})">
+        <div class="sc-icon sc-teal">🧠</div>
+        <h3>Claridad Mental</h3>
+        <p>NAD+, Complejo B y aminoácidos neuroprotectores para mejorar enfoque, memoria y claridad mental.</p>
+        <span class="service-tag tag-violet">Premium</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COTIZADOR -->
+<section id="cotizador">
+  <div class="container">
+    <div class="section-label">Cotizador</div>
+    <h2 class="section-title">Arma tu pedido<br><span class="gradient-text">y pide tu precio</span></h2>
+    <p class="section-sub">Selecciona los sueros que quieres, ajusta la cantidad y envíanos tu cotización directo por WhatsApp.</p>
+
+    <div class="cotizador-wrap">
+      <div class="productos-lista" id="lista-productos"></div>
+
+      <div class="resumen-card">
+        <h3>💧 Tu cotización</h3>
+        <div class="resumen-lineas" id="resumen-lineas">
+          <p class="resumen-empty">Selecciona al menos un suero</p>
+        </div>
+        <hr class="resumen-divider">
+        <div class="resumen-total">
+          <span>Total estimado</span>
+          <span class="resumen-total-num" id="total-num">$0</span>
+        </div>
+        <div class="domicilio-note">🏠 Domicilio gratis en Medellín y Área Metro</div>
+        <button class="wa-btn-cot" id="btn-cotizar" disabled>
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar cotización por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section style="background:var(--dark)">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">Proceso</div>
+      <h2 class="section-title">Así de sencillo</h2>
+      <p class="section-sub" style="margin:0 auto">En menos de una hora tienes al equipo de GottaVital en tu puerta.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h3>Cotiza tu suero</h3><p>Usa nuestro cotizador, elige los tratamientos y envíanos tu pedido por WhatsApp.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Confirmamos en 5 min</h3><p>Te respondemos al instante con la disponibilidad y confirmamos tu cita al <strong style="color:var(--cyan)">+57 322 562 5668</strong>.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Te visitamos</h3><p>Nuestro enfermero certificado llega a tu domicilio con todo el equipo estéril necesario.</p></div>
+      <div class="step"><div class="step-num">4</div><h3>Disfruta el bienestar</h3><p>Relájate mientras recibes el tratamiento. La sesión dura entre 30 y 60 minutos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section id="beneficios" style="background:rgba(255,255,255,.01)">
+  <div class="container">
+    <div class="benefits-layout">
+      <div>
+        <div class="section-label">¿Por qué GottaVital?</div>
+        <h2 class="section-title">Bienestar de<br>alto nivel<br><span class="gradient-text">en tu hogar</span></h2>
+        <div class="benefit-list" style="margin-top:2rem">
+          <div class="benefit-item"><div class="bi-icon">🏥</div><div class="bi-text"><h4>Personal 100% certificado</h4><p>Todos nuestros enfermeros tienen licencia médica vigente y experiencia clínica comprobada.</p></div></div>
+          <div class="benefit-item"><div class="bi-icon">🧴</div><div class="bi-text"><h4>Insumos de grado hospitalario</h4><p>Usamos únicamente productos farmacéuticos certificados y materiales estériles de un solo uso.</p></div></div>
+          <div class="benefit-item"><div class="bi-icon">🚀</div><div class="bi-text"><h4>Absorción 100% efectiva</h4><p>La vía intravenosa garantiza que los nutrientes lleguen directamente al torrente sanguíneo.</p></div></div>
+          <div class="benefit-item"><div class="bi-icon">📍</div><div class="bi-text"><h4>Todo el Área Metropolitana</h4><p>Desde Barbosa hasta Caldas, llegamos a tu casa, hotel u oficina. Sin filas, sin esperas.</p></div></div>
+        </div>
+      </div>
+      <div class="visual-card">
+        <div class="vc-bg"></div>
+        <div class="big-drop">💧</div>
+        <p style="font-family:'Clash Display',sans-serif;font-size:1.3rem;font-weight:700;position:relative;margin-top:1rem">Resultados desde<br>la primera sesión</p>
+        <div class="vc-stats">
+          <div class="vc-stat"><div class="vc-stat-num">97%</div><div class="vc-stat-lbl">satisfacción</div></div>
+          <div class="vc-stat"><div class="vc-stat-num">30min</div><div class="vc-stat-lbl">sesión mínima</div></div>
+          <div class="vc-stat"><div class="vc-stat-num">6</div><div class="vc-stat-lbl">tratamientos</div></div>
+          <div class="vc-stat"><div class="vc-stat-num">24/7</div><div class="vc-stat-lbl">disponible</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COBERTURA -->
+<section id="cobertura" style="background:var(--dark)">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">Zona de cobertura</div>
+      <h2 class="section-title">Llegamos a todo el<br><span class="gradient-text">Área Metropolitana</span></h2>
+      <p class="section-sub" style="margin:0 auto">Si estás en Medellín o los municipios del área metro, GottaVital llega hasta tu puerta.</p>
+    </div>
+    <div class="cobertura-grid">
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Medellín</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Bello</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Itagüí</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Envigado</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Sabaneta</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>La Estrella</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Caldas</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Copacabana</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Girardota</span></div>
+      <div class="ciudad-pill"><div class="ciudad-dot"></div><span>Barbosa</span></div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:1.5rem">¿No ves tu municipio? Escríbenos, cubrimos más zonas.</p>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section id="testimonios" style="background:rgba(255,255,255,.01)">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">Testimonios</div>
+      <h2 class="section-title">Lo que dicen en Medellín</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"GottaVital me llegó a El Poblado en menos de una hora, el enfermero fue súper profesional. Después del suero de energía me sentí completamente diferente. ¡100% recomendado!"</p><div class="testi-author"><div class="avatar">SM</div><div class="author-info"><strong>Sara M.</strong><span>Medellín · Suero de Energía</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"Llegué de viaje deshidratado y con dolor de cabeza horrible. GottaVital llegó a mi apartamento en Envigado y en 45 minutos ya estaba como nuevo. Lo uso cada mes."</p><div class="testi-author"><div class="avatar">JR</div><div class="author-info"><strong>Julián R.</strong><span>Envigado · Hidratación Total</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"El suero de belleza con Glutatión cambió mi piel en pocas semanas. Me lo aplican en Sabaneta sin ningún problema. La comodidad de recibirlo en casa no tiene precio."</p><div class="testi-author"><div class="avatar">LP</div><div class="author-info"><strong>Laura P.</strong><span>Sabaneta · Glow & Belleza</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:var(--dark);padding:6rem 2rem">
+  <div class="cta-box">
+    <div class="cta-glow"></div>
+    <h2>¿Listo para sentirte <span class="gradient-text">increíble?</span></h2>
+    <p>Escríbenos ahora mismo por WhatsApp. Llegamos a tu puerta en Medellín y el Área Metropolitana en menos de 60 minutos.</p>
+    <div class="cta-actions">
+      <a href="https://wa.me/573225625668?text=Hola%20GottaVital,%20quiero%20información%20sobre%20sueroterapia%20a%20domicilio%20en%20Medellín" class="whatsapp-btn" target="_blank">
+        <svg class="wa-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Escribir por WhatsApp
+      </a>
+      <a href="tel:+573225625668" class="phone-btn">📞 +57 322 562 5668</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">💧 GottaVital</div>
+    <div class="footer-contact">
+      <a href="https://wa.me/573225625668" target="_blank">💬 WhatsApp: +57 322 562 5668</a>
+      <a href="tel:+573225625668">📞 +57 322 562 5668</a>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#cotizador">Cotizador</a></li>
+      <li><a href="#cobertura">Cobertura</a></li>
+      <li><a href="#testimonios">Testimonios</a></li>
+    </ul>
+    <p>© 2025 GottaVital · Sueroterapia a Domicilio · Medellín y Área Metropolitana</p>
+    <p style="margin-top:.4rem">Personal médico certificado · Insumos de grado hospitalario</p>
+  </div>
+</footer>
+
+<script>
+const WA = '573225625668';
+const productos = [
+  {id:'energia',   emoji:'⚡', nombre:'Energía & Vitalidad',      desc:'Complejo B, Magnesio, Taurina',         precio:180000},
+  {id:'inmune',    emoji:'🛡️', nombre:'Refuerzo Inmune',           desc:'Vitamina C alta dosis, Zinc',           precio:200000},
+  {id:'belleza',   emoji:'✨', nombre:'Glow & Belleza',            desc:'Glutatión, Vitamina C, Biotina',        precio:220000},
+  {id:'deportivo', emoji:'🏃', nombre:'Recuperación Deportiva',    desc:'Aminoácidos, electrolitos',             precio:190000},
+  {id:'hidra',     emoji:'💦', nombre:'Hidratación Total',         desc:'Solución salina + electrolitos',        precio:150000},
+  {id:'mental',    emoji:'🧠', nombre:'Claridad Mental',           desc:'NAD+, Complejo B, neuroprotectores',    precio:250000},
+];
+
+const estado = {};
+productos.forEach(p => { estado[p.id] = {sel:false, qty:1}; });
+
+function fmt(n){ return '$' + n.toLocaleString('es-CO'); }
+
+function render(){
+  const lista = document.getElementById('lista-productos');
+  lista.innerHTML = productos.map(p => {
+    const s = estado[p.id];
+    return `<div class="prod-item${s.sel?' selected':''}" id="item-${p.id}">
+      <div class="prod-check" onclick="toggle('${p.id}')">${s.sel?'✓':''}</div>
+      <div class="prod-emoji" onclick="toggle('${p.id}')">${p.emoji}</div>
+      <div class="prod-info" onclick="toggle('${p.id}')">
+        <strong>${p.nombre}</strong>
+        <span>${p.desc}</span>
+      </div>
+      <div class="prod-precio">${fmt(p.precio)}</div>
+      ${s.sel ? `<div class="prod-qty">
+        <button class="qty-btn" onclick="cambiarQty('${p.id}',-1)">−</button>
+        <span class="qty-num">${s.qty}</span>
+        <button class="qty-btn" onclick="cambiarQty('${p.id}',1)">+</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+  actualizarResumen();
+}
+
+function toggle(id){
+  estado[id].sel = !estado[id].sel;
+  if(!estado[id].sel) estado[id].qty = 1;
+  render();
+}
+
+function cambiarQty(id, delta){
+  estado[id].qty = Math.max(1, estado[id].qty + delta);
+  render();
+}
+
+function actualizarResumen(){
+  const sel = productos.filter(p => estado[p.id].sel);
+  const lineas = document.getElementById('resumen-lineas');
+  const totalEl = document.getElementById('total-num');
+  const btn = document.getElementById('btn-cotizar');
+
+  if(sel.length === 0){
+    lineas.innerHTML = '<p class="resumen-empty">Selecciona al menos un suero</p>';
+    totalEl.textContent = '$0';
+    btn.disabled = true;
+    return;
+  }
+
+  let total = 0;
+  lineas.innerHTML = sel.map(p => {
+    const sub = p.precio * estado[p.id].qty;
+    total += sub;
+    return `<div class="resumen-linea">
+      <span>${p.emoji} ${p.nombre}${estado[p.id].qty>1?' x'+estado[p.id].qty:''}</span>
+      <span>${fmt(sub)}</span>
+    </div>`;
+  }).join('');
+
+  totalEl.textContent = fmt(total);
+  btn.disabled = false;
+
+  btn.onclick = () => {
+    const lineasTxt = sel.map(p =>
+      `• ${p.nombre}${estado[p.id].qty>1?' x'+estado[p.id].qty:''}: ${fmt(p.precio * estado[p.id].qty)}`
+    ).join('\n');
+    const msg = encodeURIComponent(
+      `Hola GottaVital! 💧 Quiero cotizar los siguientes sueros a domicilio en Medellín:\n\n${lineasTxt}\n\n*Total estimado: ${fmt(total)}*\n\n¿Cuándo pueden venir?`
+    );
+    window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
+  };
+}
+
+render();
+</script>
+</body>
+</html>
+
