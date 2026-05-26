@@ -101,7 +101,7 @@
   .qty-btn:hover{background:rgba(255,255,255,.1)}
   .qty-num{font-size:.9rem;font-weight:700;min-width:18px;text-align:center}
 
-  .resumen-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem;position:sticky;top:100px}
+  .resumen-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem}
   .resumen-card h3{font-size:1.2rem;margin-bottom:1.2rem;font-weight:700}
   .resumen-lineas{display:flex;flex-direction:column;gap:.6rem;min-height:80px;margin-bottom:1.2rem}
   .resumen-linea{display:flex;justify-content:space-between;font-size:.88rem;color:var(--muted)}
@@ -117,7 +117,30 @@
   .wa-btn-cot svg{width:20px;height:20px;fill:white;flex-shrink:0}
   .wa-btn-cot:disabled,.wa-btn-cot[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
-  /* ===== CAJA DATOS PERSONALES ===== */
+  /* ===== GALERÍA MULTIMEDIA ===== */
+  #galeria{background:var(--dark)}
+  .galeria-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;margin-top:3rem;margin-bottom:3rem}
+  .gal-item{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:var(--card);min-height:200px;transition:transform .3s,border-color .3s}
+  .gal-item:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.3)}
+  .gal-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+  .gal-item:hover img{transform:scale(1.05)}
+  .gal-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(10,10,15,.95) 100%);display:flex;align-items:flex-end;padding:1.2rem;pointer-events:none}
+  .gal-tag{font-family:'Clash Display',sans-serif;font-size:.95rem;font-weight:600;color:#fff}
+  .gal-tag-sub{display:block;font-family:'Satoshi',sans-serif;font-size:.72rem;color:var(--cyan);font-weight:500;margin-top:.2rem;letter-spacing:.05em;text-transform:uppercase}
+  .gal-big{grid-column:span 8;grid-row:span 2;min-height:420px}
+  .gal-md{grid-column:span 4;min-height:200px}
+  .gal-sm{grid-column:span 4;min-height:200px}
+
+  .video-wrap{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden}
+  .video-header{padding:1.5rem 1.8rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.06)}
+  .video-header-text h3{font-family:'Clash Display',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.2rem}
+  .video-header-text p{font-size:.85rem;color:var(--muted)}
+  .video-badge{background:rgba(255,60,172,.15);border:1px solid rgba(255,60,172,.3);color:var(--pink);padding:.35rem .9rem;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-flex;align-items:center;gap:.4rem}
+  .video-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--pink);animation:pulse 1.5s infinite}
+  .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+
+  /* ===== CAJA DATOS PERSONALES (NUEVO) ===== */
   .datos-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem;margin-top:1.2rem}
   .datos-card h3{font-size:1.2rem;margin-bottom:.4rem;font-weight:700;font-family:'Clash Display',sans-serif}
   .datos-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.5}
@@ -224,8 +247,9 @@
     .nav-links{display:none}
     .cta-box{padding:2.5rem 1.5rem}
     h1{font-size:2.4rem}
-    .resumen-card{position:static}
     .datos-row{grid-template-columns:1fr}
+    .gal-big,.gal-md,.gal-sm{grid-column:span 12;grid-row:auto;min-height:220px}
+    .gal-big{min-height:280px}
   }
 </style>
 </head>
@@ -240,6 +264,7 @@
   <ul class="nav-links">
     <li><a href="#servicios">Servicios</a></li>
     <li><a href="#cotizador">Cotizar</a></li>
+    <li><a href="#galeria">Galería</a></li>
     <li><a href="#cobertura">Cobertura</a></li>
     <li><a href="#testimonios">Testimonios</a></li>
   </ul>
@@ -278,7 +303,7 @@
     <div><div class="stat-num">500+</div><div class="stat-lbl">Pacientes satisfechos</div></div>
     <div><div class="stat-num">60min</div><div class="stat-lbl">Tiempo de llegada</div></div>
     <div><div class="stat-num">100%</div><div class="stat-lbl">Personal certificado</div></div>
-    <div><div class="stat-num">24/7</div><div class="stat-lbl">Disponibilidad</div></div>
+    <div><div class="stat-num">8-7</div><div class="stat-lbl">Lun a Dom · 8am-7pm</div></div>
   </div>
 </div>
 
@@ -361,7 +386,7 @@
           </button>
         </div>
 
-        <!-- ===== CAJA DATOS PERSONALES ===== -->
+        <!-- ===== CAJA DATOS PERSONALES (NUEVO) ===== -->
         <div class="datos-card">
           <h3>👤 Tus datos</h3>
           <p class="datos-sub">Para que podamos confirmar tu cita y llegar a tu puerta.</p>
@@ -404,12 +429,26 @@
             </div>
             <div class="datos-row">
               <div class="datos-field">
-                <label for="dato-fecha">Fecha preferida</label>
+                <label for="dato-fecha">Fecha de la visita</label>
                 <input type="date" id="dato-fecha">
               </div>
               <div class="datos-field">
-                <label for="dato-hora">Hora preferida</label>
-                <input type="time" id="dato-hora">
+                <label for="dato-hora">Horario disponible</label>
+                <select id="dato-hora">
+                  <option value="">Selecciona una hora</option>
+                  <option value="8:00 AM">8:00 AM</option>
+                  <option value="9:00 AM">9:00 AM</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="1:00 PM">1:00 PM</option>
+                  <option value="2:00 PM">2:00 PM</option>
+                  <option value="3:00 PM">3:00 PM</option>
+                  <option value="4:00 PM">4:00 PM</option>
+                  <option value="5:00 PM">5:00 PM</option>
+                  <option value="6:00 PM">6:00 PM</option>
+                  <option value="7:00 PM">7:00 PM</option>
+                </select>
               </div>
             </div>
             <div class="datos-field">
@@ -462,8 +501,89 @@
           <div class="vc-stat"><div class="vc-stat-num">97%</div><div class="vc-stat-lbl">satisfacción</div></div>
           <div class="vc-stat"><div class="vc-stat-num">30min</div><div class="vc-stat-lbl">sesión mínima</div></div>
           <div class="vc-stat"><div class="vc-stat-num">6</div><div class="vc-stat-lbl">tratamientos</div></div>
-          <div class="vc-stat"><div class="vc-stat-num">24/7</div><div class="vc-stat-lbl">disponible</div></div>
+          <div class="vc-stat"><div class="vc-stat-num">8-7</div><div class="vc-stat-lbl">horario diario</div></div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERÍA MULTIMEDIA -->
+<section id="galeria" style="background:var(--dark)">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">Conoce el servicio</div>
+      <h2 class="section-title">Sueroterapia <span class="gradient-text">en acción</span></h2>
+      <p class="section-sub" style="margin:0 auto">Así trabajamos: insumos estériles, técnica profesional y la comodidad de tu hogar.</p>
+    </div>
+
+    <div class="galeria-grid">
+      <div class="gal-item gal-big">
+        <img src="https://images.unsplash.com/photo-1612531385446-f7e6d131e1d0?w=1200&q=80&auto=format&fit=crop" alt="Sueroterapia intravenosa profesional" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">Procedimiento</span>
+            <span class="gal-tag">Aplicación intravenosa con técnica estéril</span>
+          </div>
+        </div>
+      </div>
+      <div class="gal-item gal-md">
+        <img src="https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80&auto=format&fit=crop" alt="Vitaminas en sueroterapia" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">Insumos</span>
+            <span class="gal-tag">Vitaminas y nutrientes</span>
+          </div>
+        </div>
+      </div>
+      <div class="gal-item gal-md">
+        <img src="https://images.unsplash.com/photo-1666886573070-6ccb40d2b69e?w=600&q=80&auto=format&fit=crop" alt="Enfermera profesional aplicando suero" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">Personal certificado</span>
+            <span class="gal-tag">Enfermería profesional</span>
+          </div>
+        </div>
+      </div>
+      <div class="gal-item gal-sm">
+        <img src="https://images.unsplash.com/photo-1579165466741-7f35e4755660?w=600&q=80&auto=format&fit=crop" alt="Hidratación intravenosa" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">Hidratación</span>
+            <span class="gal-tag">Recupera energía</span>
+          </div>
+        </div>
+      </div>
+      <div class="gal-item gal-sm">
+        <img src="https://images.unsplash.com/photo-1559131397-f94da358f7ca?w=600&q=80&auto=format&fit=crop" alt="Vitaminas para sueroterapia" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">Bienestar</span>
+            <span class="gal-tag">Vitalidad desde adentro</span>
+          </div>
+        </div>
+      </div>
+      <div class="gal-item gal-sm">
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80&auto=format&fit=crop" alt="Servicio médico profesional a domicilio" loading="lazy">
+        <div class="gal-overlay">
+          <div>
+            <span class="gal-tag-sub">A domicilio</span>
+            <span class="gal-tag">Cómodo y seguro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-wrap">
+      <div class="video-header">
+        <div class="video-header-text">
+          <h3>🎬 ¿Qué es la sueroterapia?</h3>
+          <p>Conoce de qué se trata y por qué cada vez más personas la incorporan a su rutina de bienestar.</p>
+        </div>
+        <span class="video-badge">Video informativo</span>
+      </div>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/dz7fisnBsd4" title="Sueroterapia: Qué es y cuáles son sus beneficios" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </div>
@@ -534,6 +654,7 @@
     <ul class="footer-links">
       <li><a href="#servicios">Servicios</a></li>
       <li><a href="#cotizador">Cotizador</a></li>
+      <li><a href="#galeria">Galería</a></li>
       <li><a href="#cobertura">Cobertura</a></li>
       <li><a href="#testimonios">Testimonios</a></li>
     </ul>
@@ -554,6 +675,8 @@ const productos = [
 ];
 
 // ===== Barrios del Área Metropolitana del Valle de Aburrá =====
+// Medellín: 249 barrios oficiales agrupados por comuna.
+// Resto de municipios: barrios y sectores más conocidos.
 const barriosPorCiudad = {
   'Medellín': [
     // Comuna 1 - Popular
@@ -598,10 +721,10 @@ const barriosPorCiudad = {
     'Centro','La Aldea','San José','Calatrava','Asturias','San Pío X','Las Mercedes','Yarumito','Santa María Nº 1','Santa María Nº 2','Santa María Nº 3','La Esmeralda','Los Naranjos','Pilsen','El Rosario','La Independencia','El Palmar','Playa Rica','San Francisco','San Gabriel','Camparola','Glorieta Pilsen','La Gloria','Las Brisas','Las Margaritas','Robles','San Javier','Santa Catalina','Zona Industrial Nº 1','Zona Industrial Nº 2','Ditaires','Triana','Artex','Balcones del Sur','Bariloche','Belén','Centenario','El Porvenir','El Progreso','El Tablazo','Fátima','La Finca','La Mosquita','La Unión','Loma Linda','Malta','Monte Verde','Olivares','Samaria','Satexco','Terranova','Villa Lía','Villa Paula','Manzanillo (Corregimiento)','Otro sector',
   ],
   'Envigado': [
-    'El Centro','Alcalá','El Chinguí','Las Vegas','El Dorado','San Marcos','La Magnolia','El Trianón','La Paz','La Sebastiana','Jardines','Las Antillas','Las Flores','Las Orquídeas','Bucarest','El Salado','Las Brujas','Loma del Barro','La Mina','Bosques de Zúñiga','Zúñiga','Pontevedra','San Lucas (Envigado)','Loma de Las Brujas','El Esmeraldal','Loma del Atravesado','Loma de Benedictinos','Loma de Cumbres','Loma de Las Casitas','Loma del Escobero','Loma del Chocho','Loma de Las Lomitas','Mesa','Primavera','Uribe Ángel','Milán','El Portal','La Inmaculada','Las Casitas','Los Naranjos','Otro sector',
+    'El Centro','Alcalá','El Chinguí','Las Vegas','El Dorado','San Marcos','La Magnolia','El Trianón','La Paz','La Sebastiana','Jardines','Las Antillas','Las Flores','Las Orquídeas','Bucarest','El Salado','Las Brujas','Loma del Barro','La Mina','Bosques de Zúñiga','Zúñiga','Pontevedra','San Lucas (Envigado)','Loma de Las Brujas','El Esmeraldal','Loma del Atravesado','Loma de Benedictinos','Loma de Cumbres','Loma de Las Casitas','Loma del Escobero','Loma del Chocho','Loma de Las Lomitas','La Sebastiana','Mesa','Primavera','Uribe Ángel','Milán','El Portal','La Inmaculada','Las Casitas','Los Naranjos','Otro sector',
   ],
   'Sabaneta': [
-    'Centro','Aliadas','Restrepo Naranjo','Tres Esquinas','Calle del Banco','Calle Larga','Holanda','Las Casitas','Manuel Restrepo','Prados de Sabaneta','La Doctora','Vegas de la Doctora','María Auxiliadora','San Joaquín','Entre Amigos','Lagos de la Doctora','Playas de María','San Rafael','Santa Ana','Sabaneta Real','Paso Ancho','Promisión','Los Alcázares','El Carmelo','La Barquereña','Las Lomitas (Vereda)','La Doctora (Vereda)','San José (Vereda)','Cañaveralejo (Vereda)','Pan de Azúcar (Vereda)','Otro sector',
+    'Centro','Aliadas','Restrepo Naranjo','Tres Esquinas','Calle del Banco','Calle Larga','Holanda','Las Casitas','Manuel Restrepo','Prados de Sabaneta','La Doctora','Vegas de la Doctora','María Auxiliadora','San Joaquín','Entre Amigos','Lagos de la Doctora','Playas de María','San Rafael','Santa Ana','Tres Esquinas','Sabaneta Real','Paso Ancho','Promisión','Los Alcázares','El Carmelo','La Barquereña','Las Lomitas (Vereda)','La Doctora (Vereda)','San José (Vereda)','Cañaveralejo (Vereda)','Pan de Azúcar (Vereda)','Otro sector',
   ],
   'La Estrella': [
     'Centro','Ancón Sur','Pueblo Viejo','Quebrada Grande','San Andrés','San Isidro','Sagrada Familia','Sierra Morena','Camilo Torres','Tablazo','Bellavista','Caquetá','La Inmaculada','La Tablaza','Suramérica','Monterrey','Los Cien','Las Brisas','La Raya','Zona Industrial','Otro sector',
@@ -677,7 +800,7 @@ function cambiarQty(id, delta){
   render();
 }
 
-// === Validación de datos personales ===
+// === Validación de datos personales (NUEVO) ===
 function validarDatos(){
   const campos = [
     {id:'dato-nombre',    obligatorio:true,  min:3},
@@ -762,8 +885,8 @@ function actualizarResumen(){
     datosTxt += `• Ciudad: ${ciudad}\n`;
     datosTxt += `• Barrio: ${barrio}\n`;
     datosTxt += `• Dirección: ${direccion}\n`;
-    if(fecha) datosTxt += `• Fecha preferida: ${fecha}\n`;
-    if(hora)  datosTxt += `• Hora preferida: ${hora}\n`;
+    if(fecha) datosTxt += `• Fecha de la visita: ${fecha}\n`;
+    if(hora)  datosTxt += `• Horario: ${hora}\n`;
     if(notas) datosTxt += `• Notas: ${notas}\n`;
 
     const msg = encodeURIComponent(
