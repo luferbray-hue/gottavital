@@ -117,6 +117,41 @@
   .wa-btn-cot svg{width:20px;height:20px;fill:white;flex-shrink:0}
   .wa-btn-cot:disabled,.wa-btn-cot[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
+  /* ===== CAJA DATOS PERSONALES ===== */
+  .datos-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.8rem;margin-top:1.2rem}
+  .datos-card h3{font-size:1.2rem;margin-bottom:.4rem;font-weight:700;font-family:'Clash Display',sans-serif}
+  .datos-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.5}
+  .datos-form{display:flex;flex-direction:column;gap:.9rem}
+  .datos-field{display:flex;flex-direction:column;gap:.35rem}
+  .datos-field label{font-size:.78rem;font-weight:600;color:var(--text);letter-spacing:.02em}
+  .datos-field label .req{color:var(--pink);margin-left:2px}
+  .datos-field input,.datos-field textarea,.datos-field select{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;
+    padding:.7rem .9rem;
+    color:var(--text);
+    font-family:'Satoshi',sans-serif;
+    font-size:.9rem;
+    transition:border-color .2s,background .2s;
+    width:100%;
+    outline:none;
+  }
+  .datos-field input::placeholder,.datos-field textarea::placeholder{color:var(--muted);opacity:.6}
+  .datos-field input:focus,.datos-field textarea:focus,.datos-field select:focus{
+    border-color:var(--cyan);
+    background:rgba(0,229,255,.04);
+  }
+  .datos-field input.error,.datos-field textarea.error,.datos-field select.error{
+    border-color:var(--pink);
+    background:rgba(255,60,172,.04);
+  }
+  .datos-field textarea{resize:vertical;min-height:70px;font-family:'Satoshi',sans-serif}
+  .datos-field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238888AA' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right .8rem center;background-size:1rem;padding-right:2.2rem}
+  .datos-field select option{background:var(--card);color:var(--text)}
+  .datos-field select:disabled{opacity:.5;cursor:not-allowed}
+  .datos-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3.5rem}
   .step{text-align:center;padding:2rem 1.5rem}
   .step-num{width:56px;height:56px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:1.3rem;font-weight:700;margin:0 auto 1.2rem;color:#fff}
@@ -190,6 +225,7 @@
     .cta-box{padding:2.5rem 1.5rem}
     h1{font-size:2.4rem}
     .resumen-card{position:static}
+    .datos-row{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -307,21 +343,81 @@
     <div class="cotizador-wrap">
       <div class="productos-lista" id="lista-productos"></div>
 
-      <div class="resumen-card">
-        <h3>💧 Tu cotización</h3>
-        <div class="resumen-lineas" id="resumen-lineas">
-          <p class="resumen-empty">Selecciona al menos un suero</p>
+      <div>
+        <div class="resumen-card">
+          <h3>💧 Tu cotización</h3>
+          <div class="resumen-lineas" id="resumen-lineas">
+            <p class="resumen-empty">Selecciona al menos un suero</p>
+          </div>
+          <hr class="resumen-divider">
+          <div class="resumen-total">
+            <span>Total estimado</span>
+            <span class="resumen-total-num" id="total-num">$0</span>
+          </div>
+          <div class="domicilio-note">🏠 Domicilio gratis en Medellín y Área Metro</div>
+          <button class="wa-btn-cot" id="btn-cotizar" disabled>
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar cotización por WhatsApp
+          </button>
         </div>
-        <hr class="resumen-divider">
-        <div class="resumen-total">
-          <span>Total estimado</span>
-          <span class="resumen-total-num" id="total-num">$0</span>
+
+        <!-- ===== CAJA DATOS PERSONALES ===== -->
+        <div class="datos-card">
+          <h3>👤 Tus datos</h3>
+          <p class="datos-sub">Para que podamos confirmar tu cita y llegar a tu puerta.</p>
+          <div class="datos-form">
+            <div class="datos-field">
+              <label for="dato-nombre">Nombre completo <span class="req">*</span></label>
+              <input type="text" id="dato-nombre" placeholder="Ej: Ana Pérez" autocomplete="name">
+            </div>
+            <div class="datos-field">
+              <label for="dato-telefono">Teléfono / WhatsApp <span class="req">*</span></label>
+              <input type="tel" id="dato-telefono" placeholder="Ej: 300 123 4567" autocomplete="tel" inputmode="tel">
+            </div>
+            <div class="datos-row">
+              <div class="datos-field">
+                <label for="dato-ciudad">Ciudad <span class="req">*</span></label>
+                <select id="dato-ciudad">
+                  <option value="">Selecciona ciudad</option>
+                  <option value="Medellín">Medellín</option>
+                  <option value="Bello">Bello</option>
+                  <option value="Itagüí">Itagüí</option>
+                  <option value="Envigado">Envigado</option>
+                  <option value="Sabaneta">Sabaneta</option>
+                  <option value="La Estrella">La Estrella</option>
+                  <option value="Caldas">Caldas</option>
+                  <option value="Copacabana">Copacabana</option>
+                  <option value="Girardota">Girardota</option>
+                  <option value="Barbosa">Barbosa</option>
+                </select>
+              </div>
+              <div class="datos-field">
+                <label for="dato-barrio">Barrio / Sector <span class="req">*</span></label>
+                <select id="dato-barrio" disabled>
+                  <option value="">Primero elige ciudad</option>
+                </select>
+              </div>
+            </div>
+            <div class="datos-field">
+              <label for="dato-direccion">Dirección <span class="req">*</span></label>
+              <textarea id="dato-direccion" placeholder="Ej: Cra 43A #5-15, Apto 1203, Torre 2, El Poblado" autocomplete="street-address"></textarea>
+            </div>
+            <div class="datos-row">
+              <div class="datos-field">
+                <label for="dato-fecha">Fecha preferida</label>
+                <input type="date" id="dato-fecha">
+              </div>
+              <div class="datos-field">
+                <label for="dato-hora">Hora preferida</label>
+                <input type="time" id="dato-hora">
+              </div>
+            </div>
+            <div class="datos-field">
+              <label for="dato-notas">Notas adicionales (opcional)</label>
+              <textarea id="dato-notas" placeholder="Alergias, observaciones, indicaciones para llegar..."></textarea>
+            </div>
+          </div>
         </div>
-        <div class="domicilio-note">🏠 Domicilio gratis en Medellín y Área Metro</div>
-        <button class="wa-btn-cot" id="btn-cotizar" disabled>
-          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Enviar cotización por WhatsApp
-        </button>
       </div>
     </div>
   </div>
@@ -457,6 +553,92 @@ const productos = [
   {id:'mental',    emoji:'🧠', nombre:'Claridad Mental',           desc:'NAD+, Complejo B, neuroprotectores',    precio:250000},
 ];
 
+// ===== Barrios del Área Metropolitana del Valle de Aburrá =====
+const barriosPorCiudad = {
+  'Medellín': [
+    // Comuna 1 - Popular
+    'Santo Domingo Savio Nº 1','Santo Domingo Savio Nº 2','Popular','Granizal','Moscú Nº 2','Villa Guadalupe','San Pablo','Aldea Pablo VI','La Esperanza Nº 2','El Compromiso','La Avanzada','Carpinelo',
+    // Comuna 2 - Santa Cruz
+    'La Isla','El Playón de Los Comuneros','Pablo VI','La Frontera','La Francia','Andalucía','Villa del Socorro','Villa Niza','Moscú Nº 1','Santa Cruz','La Rosa',
+    // Comuna 3 - Manrique
+    'La Salle','Las Granjas','Campo Valdés Nº 2','Santa Inés','El Raizal','El Pomar','Manrique Central Nº 2','Manrique Oriental','Versalles Nº 1','Versalles Nº 2','La Cruz','Oriente','María Cano - Carambolas','San José La Cima Nº 1','San José La Cima Nº 2',
+    // Comuna 4 - Aranjuez
+    'Berlín','San Isidro','Palermo','Bermejal - Los Álamos','Moravia','Sevilla','San Pedro','Manrique Central Nº 1','Campo Valdés Nº 1','Las Esmeraldas','La Piñuela','Aranjuez','Brasilia','Miranda',
+    // Comuna 5 - Castilla
+    'Toscana','Las Brisas','Florencia','Tejelo','Boyacá','Héctor Abad Gómez','Belalcázar','Girardot','Tricentenario','Castilla','Francisco Antonio Zea','Alfonso López','Caribe','El Progreso',
+    // Comuna 6 - Doce de Octubre
+    'Santander','Doce de Octubre Nº 1','Doce de Octubre Nº 2','Pedregal','La Esperanza','San Martín de Porres','Kennedy','Picacho','Picachito','Mirador del Doce','Progreso Nº 2','El Triunfo',
+    // Comuna 7 - Robledo
+    'Cerro El Volador','San Germán','Facultad de Minas U.N.','La Pilarica','Bosques de San Pablo','Altamira','Córdoba','López de Mesa','El Diamante','Aures Nº 1','Aures Nº 2','Bello Horizonte','Villa Flora','Palenque','Robledo','Cucaracho','Fuente Clara','Santa Margarita','Olaya Herrera','Pajarito','Monteclaro','Nueva Villa de La Iguaná',
+    // Comuna 8 - Villa Hermosa
+    'Villa Hermosa','La Mansión','San Miguel','La Ladera','Batallón Girardot','Llanaditas','Los Mangos','Enciso','Sucre','El Pinal','Trece de Noviembre','La Libertad','Villatina','San Antonio','Las Estancias','Villa Turbay','La Sierra','Villa Lilliam',
+    // Comuna 9 - Buenos Aires
+    'Juan Pablo II','Barrios de Jesús','Bomboná Nº 2','Los Cerros - El Vergel','Alejandro Echavarría','Barrio Caicedo','Buenos Aires','Miraflores','Cataluña','La Milagrosa','Gerona','El Salvador','Loreto','Asomadera Nº 1','Asomadera Nº 2','Asomadera Nº 3','Ocho de Marzo',
+    // Comuna 10 - La Candelaria
+    'Prado','Jesús Nazareno','El Chagualo','Estación Villa','San Benito','Guayaquil','Corazón de Jesús','Calle Nueva','Perpetuo Socorro','Barrio Colón','Las Palmas','Bomboná Nº 1','Boston','Los Ángeles','Villa Nueva','La Candelaria','San Diego',
+    // Comuna 11 - Laureles - Estadio
+    'Carlos E. Restrepo','Suramericana','Naranjal','San Joaquín','Los Conquistadores','Bolivariana','Laureles','Las Acacias','La Castellana','Lorena','El Velódromo','Estadio','Los Colores','Cuarta Brigada','Florida Nueva',
+    // Comuna 12 - La América
+    'Ferrini','Calasanz','Los Pinos','La América','La Floresta','Santa Lucía','El Danubio','Campo Alegre','Santa Mónica','Barrio Cristóbal','Simón Bolívar','Santa Teresita','Calasanz Parte Alta',
+    // Comuna 13 - San Javier
+    'El Pesebre','Blanquizal','Santa Rosa de Lima','Los Alcázares','Metropolitano','La Pradera','Juan XXIII - La Quiebra','San Javier Nº 1','San Javier Nº 2','Veinte de Julio','Belencito','Betania','El Corazón','Las Independencias','Nuevos Conquistadores','El Salado','Eduardo Santos','Antonio Nariño','El Socorro',
+    // Comuna 14 - El Poblado
+    'Barrio Colombia','Simesa','Villa Carlota','Castropol','Lalinde','Las Lomas Nº 1','Las Lomas Nº 2','Altos del Poblado','El Tesoro','Los Naranjos','Los Balsos Nº 1','Los Balsos Nº 2','San Lucas','El Diamante (El Poblado)','El Castillo','Alejandría','La Florida','El Poblado','Astorga','Patio Bonito','La Aguacatala','Santa María de Los Ángeles','Manila',
+    // Comuna 15 - Guayabal
+    'Tenche','Trinidad','Santa Fé','Parque Juan Pablo II','Campo Amor','Noel','Cristo Rey','Guayabal','La Colina',
+    // Comuna 16 - Belén
+    'Fátima','Rosales','Belén','Granada','San Bernardo','Las Playas','Diego Echavarría','La Mota','La Hondonada','El Rincón','La Loma de Los Bernal','La Gloria','Altavista','La Palma','Cerro Nutibara','Zafra','Los Alpes','Las Violetas','Las Mercedes','Nueva Villa de Aburrá','Miravalle','El Nogal - Los Almendros',
+    // Corregimientos
+    'San Cristóbal (Corregimiento)','Altavista (Corregimiento)','San Antonio de Prado (Corregimiento)','Santa Elena (Corregimiento)','San Sebastián de Palmitas (Corregimiento)',
+  ],
+  'Bello': [
+    'Centro','París','Niquía','Madera','Cabañas','Navarra','Santa Ana','La Cumbre','La Maruchenga','Salento','Suárez','La Mora','Andalucía','La Camila','Fontidueño','El Rosario','La Gabriela','El Trébol','Playa Rica','Pérez','Acevedo','Bellavista','La Florida','Las Vegas','Prado','San José Obrero','Zamora','Altos de Niquía','Ciudadela del Norte','El Cairo','El Carmelo','El Mirador','El Porvenir','La Selva','Las Granjas','Los Sauces','Manchester','Mirador del Norte','Nueva Jerusalén','París Centro','Pachelly','Quitasol','Rincón Santo','San Félix','San Martín','Santa Rita','Serramonte','Villa María','Vista Hermosa','Aldea Pablo VI','Otro sector',
+  ],
+  'Itagüí': [
+    'Centro','La Aldea','San José','Calatrava','Asturias','San Pío X','Las Mercedes','Yarumito','Santa María Nº 1','Santa María Nº 2','Santa María Nº 3','La Esmeralda','Los Naranjos','Pilsen','El Rosario','La Independencia','El Palmar','Playa Rica','San Francisco','San Gabriel','Camparola','Glorieta Pilsen','La Gloria','Las Brisas','Las Margaritas','Robles','San Javier','Santa Catalina','Zona Industrial Nº 1','Zona Industrial Nº 2','Ditaires','Triana','Artex','Balcones del Sur','Bariloche','Belén','Centenario','El Porvenir','El Progreso','El Tablazo','Fátima','La Finca','La Mosquita','La Unión','Loma Linda','Malta','Monte Verde','Olivares','Samaria','Satexco','Terranova','Villa Lía','Villa Paula','Manzanillo (Corregimiento)','Otro sector',
+  ],
+  'Envigado': [
+    'El Centro','Alcalá','El Chinguí','Las Vegas','El Dorado','San Marcos','La Magnolia','El Trianón','La Paz','La Sebastiana','Jardines','Las Antillas','Las Flores','Las Orquídeas','Bucarest','El Salado','Las Brujas','Loma del Barro','La Mina','Bosques de Zúñiga','Zúñiga','Pontevedra','San Lucas (Envigado)','Loma de Las Brujas','El Esmeraldal','Loma del Atravesado','Loma de Benedictinos','Loma de Cumbres','Loma de Las Casitas','Loma del Escobero','Loma del Chocho','Loma de Las Lomitas','Mesa','Primavera','Uribe Ángel','Milán','El Portal','La Inmaculada','Las Casitas','Los Naranjos','Otro sector',
+  ],
+  'Sabaneta': [
+    'Centro','Aliadas','Restrepo Naranjo','Tres Esquinas','Calle del Banco','Calle Larga','Holanda','Las Casitas','Manuel Restrepo','Prados de Sabaneta','La Doctora','Vegas de la Doctora','María Auxiliadora','San Joaquín','Entre Amigos','Lagos de la Doctora','Playas de María','San Rafael','Santa Ana','Sabaneta Real','Paso Ancho','Promisión','Los Alcázares','El Carmelo','La Barquereña','Las Lomitas (Vereda)','La Doctora (Vereda)','San José (Vereda)','Cañaveralejo (Vereda)','Pan de Azúcar (Vereda)','Otro sector',
+  ],
+  'La Estrella': [
+    'Centro','Ancón Sur','Pueblo Viejo','Quebrada Grande','San Andrés','San Isidro','Sagrada Familia','Sierra Morena','Camilo Torres','Tablazo','Bellavista','Caquetá','La Inmaculada','La Tablaza','Suramérica','Monterrey','Los Cien','Las Brisas','La Raya','Zona Industrial','Otro sector',
+  ],
+  'Caldas': [
+    'Centro','Cristo Rey','Andalucía','La Inmaculada Nº 1','La Inmaculada Nº 2','Villa Capri','Mandalay','Bellavista','La Buena Esperanza','Lusitania','Olaya Herrera','Felipe Echavarría','La Planta','La Chuscala','La Ferrería','El Raizal','Centenario','Primavera','La Gran Vía','Salinas','Tres Aguas','Otro sector',
+  ],
+  'Copacabana': [
+    'Centro','El Recreo','Machado','La Misericordia','Villa Nueva','El Pedregal','Tobón Quintero','San Juan','Yarumal','Vegas de San José','Cabuyal','Cristo Rey','Los Mangos','La Vega','Las Cabañas','Las Vegas','El Cerro','El Convento','Otro sector',
+  ],
+  'Girardota': [
+    'Centro','El Tranvía','Manuel J. Sierra','La Estrella','La Holanda','La Mata','Hatillo','Loma de los Ochoa','El Llano','Juan de Dios Cock','El Paraíso','San Esteban','El Socorro','Santa Inés','La Calle','El Mirador','Otro sector',
+  ],
+  'Barbosa': [
+    'Centro','Buenos Aires','El Carmelo','Hatillo','Popalito','Yarumito','La Cordillera','La Cuesta','Manga Arriba','Manga Abajo','El Tablazo','Tablacito','El Palmar','El Pedregal','Otro sector',
+  ],
+};
+
+function poblarBarrios(){
+  const ciudadSel = document.getElementById('dato-ciudad');
+  const barrioSel = document.getElementById('dato-barrio');
+  const ciudad = ciudadSel.value;
+  if(!ciudad || !barriosPorCiudad[ciudad]){
+    barrioSel.innerHTML = '<option value="">Primero elige ciudad</option>';
+    barrioSel.disabled = true;
+    return;
+  }
+  const lista = barriosPorCiudad[ciudad].slice().sort((a,b) => a.localeCompare(b,'es'));
+  barrioSel.innerHTML = '<option value="">Selecciona barrio o sector</option>' +
+    lista.map(b => `<option value="${b}">${b}</option>`).join('');
+  barrioSel.disabled = false;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const ciudadSel = document.getElementById('dato-ciudad');
+  if(ciudadSel) ciudadSel.addEventListener('change', poblarBarrios);
+});
+
 const estado = {};
 productos.forEach(p => { estado[p.id] = {sel:false, qty:1}; });
 
@@ -495,6 +677,38 @@ function cambiarQty(id, delta){
   render();
 }
 
+// === Validación de datos personales ===
+function validarDatos(){
+  const campos = [
+    {id:'dato-nombre',    obligatorio:true,  min:3},
+    {id:'dato-telefono',  obligatorio:true,  min:7},
+    {id:'dato-ciudad',    obligatorio:true,  min:1},
+    {id:'dato-barrio',    obligatorio:true,  min:1},
+    {id:'dato-direccion', obligatorio:true,  min:5},
+  ];
+  let ok = true;
+  campos.forEach(c => {
+    const el = document.getElementById(c.id);
+    const val = (el.value || '').trim();
+    if(c.obligatorio && val.length < c.min){
+      el.classList.add('error');
+      ok = false;
+    } else {
+      el.classList.remove('error');
+    }
+  });
+  return ok;
+}
+
+// Quitar borde rojo al escribir
+['dato-nombre','dato-telefono','dato-ciudad','dato-barrio','dato-direccion'].forEach(id => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', () => el.classList.remove('error'));
+    if(el) el.addEventListener('change', () => el.classList.remove('error'));
+  });
+});
+
 function actualizarResumen(){
   const sel = productos.filter(p => estado[p.id].sel);
   const lineas = document.getElementById('resumen-lineas');
@@ -522,11 +736,38 @@ function actualizarResumen(){
   btn.disabled = false;
 
   btn.onclick = () => {
+    // Validar datos antes de enviar
+    if(!validarDatos()){
+      const datosCard = document.querySelector('.datos-card');
+      if(datosCard) datosCard.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+
+    const nombre    = document.getElementById('dato-nombre').value.trim();
+    const telefono  = document.getElementById('dato-telefono').value.trim();
+    const ciudad    = document.getElementById('dato-ciudad').value.trim();
+    const barrio    = document.getElementById('dato-barrio').value.trim();
+    const direccion = document.getElementById('dato-direccion').value.trim();
+    const fecha     = document.getElementById('dato-fecha').value.trim();
+    const hora      = document.getElementById('dato-hora').value.trim();
+    const notas     = document.getElementById('dato-notas').value.trim();
+
     const lineasTxt = sel.map(p =>
       `• ${p.nombre}${estado[p.id].qty>1?' x'+estado[p.id].qty:''}: ${fmt(p.precio * estado[p.id].qty)}`
     ).join('\n');
+
+    let datosTxt = `👤 *Datos del paciente*\n`;
+    datosTxt += `• Nombre: ${nombre}\n`;
+    datosTxt += `• Teléfono: ${telefono}\n`;
+    datosTxt += `• Ciudad: ${ciudad}\n`;
+    datosTxt += `• Barrio: ${barrio}\n`;
+    datosTxt += `• Dirección: ${direccion}\n`;
+    if(fecha) datosTxt += `• Fecha preferida: ${fecha}\n`;
+    if(hora)  datosTxt += `• Hora preferida: ${hora}\n`;
+    if(notas) datosTxt += `• Notas: ${notas}\n`;
+
     const msg = encodeURIComponent(
-      `Hola GottaVital! 💧 Quiero cotizar los siguientes sueros a domicilio en Medellín:\n\n${lineasTxt}\n\n*Total estimado: ${fmt(total)}*\n\n¿Cuándo pueden venir?`
+      `Hola GottaVital! 💧 Quiero cotizar los siguientes sueros a domicilio:\n\n${lineasTxt}\n\n*Total estimado: ${fmt(total)}*\n\n${datosTxt}\n¿Cuándo pueden venir?`
     );
     window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
   };
