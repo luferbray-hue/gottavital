@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#FF3CAC"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="40%" cy="35%" r="30%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Fondo redondeado -->
+  <rect width="64" height="64" rx="14" ry="14" fill="#0A0A0F"/>
+  <!-- Gotita principal -->
+  <path d="M32 10
+           C 32 10, 14 32, 14 42
+           C 14 52, 22 58, 32 58
+           C 42 58, 50 52, 50 42
+           C 50 32, 32 10, 32 10 Z"
+        fill="url(#g)"/>
+  <!-- Brillo interno -->
+  <ellipse cx="26" cy="32" rx="8" ry="11" fill="url(#shine)"/>
+</svg>
