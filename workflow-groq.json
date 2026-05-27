@@ -1,0 +1,399 @@
+{
+  "name": "GottaVital - Agente WhatsApp (Groq)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gottavital-wa",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-in",
+      "name": "Webhook Entrada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "gottavital-wa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza payloads de Evolution API y del formulario web\nconst body = $input.first().json.body || $input.first().json;\n\nlet from = '';\nlet message = '';\nlet pushName = '';\nlet source = 'unknown';\n\n// --- Evolution API ---\nif (body.data && body.data.key) {\n  // Ignorar mensajes que envía el propio bot\n  if (body.data.key.fromMe === true) {\n    return [{ json: { skip: true, reason: 'mensaje propio' } }];\n  }\n  from = body.data.key.remoteJid.replace('@s.whatsapp.net', '');\n  message = body.data.message?.conversation\n    || body.data.message?.extendedTextMessage?.text\n    || '';\n  pushName = body.data.pushName || '';\n  source = 'whatsapp';\n}\n// --- Formulario / chat web ---\nelse if (body.source === 'web-form' || body.source === 'web-chat') {\n  from = (body.telefono || body.sessionId || 'anon').replace(/\\D/g, '') || body.telefono;\n  if (from && from.length < 10 && !from.startsWith('web_')) {\n    from = 'web_' + from;\n  }\n  message = body.mensaje || body.message || '';\n  pushName = body.nombre || 'Visitante web';\n  source = 'web';\n}\n\nif (!message || !from) {\n  return [{ json: { skip: true, reason: 'datos faltantes' } }];\n}\n\nreturn [{\n  json: {\n    from,\n    message: message.trim(),\n    pushName,\n    source\n  }\n}];"
+      },
+      "id": "normalize",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "skip-check",
+      "name": "¿Saltar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [640, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"skipped\"}"
+      },
+      "id": "skip-response",
+      "name": "Respuesta vacía",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [860, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// System prompt completo de GottaBot\nconst now = new Date().toLocaleString('es-CO', {\n  timeZone: 'America/Bogota',\n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',\n  hour: '2-digit', minute: '2-digit'\n});\n\nconst systemPrompt = `Eres GottaBot, asistente virtual de GottaVital, servicio de sueroterapia intravenosa a domicilio en Medellín y el Área Metropolitana.\n\nFECHA Y HORA ACTUAL: ${now} (hora de Colombia)\n\nTONO:\n- Cálido, cercano, profesional. Tono paisa amable.\n- Respuestas cortas (máximo 4-5 líneas). WhatsApp no es email.\n- Formato WhatsApp: usa *negrita* (un asterisco) y _cursiva_ (un guion bajo).\n- NUNCA uses markdown con # o bullets con guiones. Usa emojis para listas: 1️⃣ 2️⃣ o el emoji del suero.\n\nCATÁLOGO (precios en pesos colombianos):\n⚡ Energía & Vitalidad - $180.000 (Complejo B, Magnesio, Taurina)\n🛡️ Refuerzo Inmune - $200.000 (Vitamina C alta dosis, Zinc)\n✨ Glow & Belleza - $220.000 (Glutatión, Vitamina C, Biotina)\n🏃 Recuperación Deportiva - $190.000 (Aminoácidos, electrolitos)\n💦 Hidratación Total - $150.000 (Solución salina + electrolitos)\n🧠 Claridad Mental - $250.000 (NAD+, Complejo B, neuroprotectores)\n\nDomicilio GRATIS en toda el Área Metro.\nHorario: Lunes a domingo, 8:00 AM a 7:00 PM.\nDuración de sesión: 30-60 minutos.\n\nCOBERTURA: Medellín, Bello, Itagüí, Envigado, Sabaneta, La Estrella, Caldas, Copacabana, Girardota, Barbosa.\n\nPARA AGENDAR UNA CITA necesitas TODO esto:\n1. Nombre completo\n2. Teléfono (si no es el del WhatsApp con el que escribe)\n3. Ciudad y barrio\n4. Dirección exacta (calle, número, apto/torre, indicaciones)\n5. Suero(s) elegido(s) + cantidad\n6. Fecha (formato YYYY-MM-DD)\n7. Hora (entre 08:00 y 19:00)\n\nPide UN dato por mensaje cuando falten varios. No abrumes al cliente.\n\nREGLAS DURAS:\n- Nunca inventes precios, ingredientes ni promociones.\n- No des consejo médico. Si preguntan si pueden aplicarse algo con cierta condición, responde: \"Esa decisión la toma nuestro enfermero al evaluarte. ¿Te agendo una valoración? Si no aplica, no te cobramos.\"\n- No agendes fuera del horario 8AM-7PM.\n- No agendes el mismo día con menos de 2 horas de anticipación.\n- Si la ciudad NO está en cobertura, discúlpate y ofrece avisar cuando se expanda.\n- Antes de agendar definitivamente, presenta un resumen de TODOS los datos y pide confirmación.\n\nIMPORTANTE - HERRAMIENTAS:\nTienes 3 herramientas disponibles. Cuando necesites usar una, responde ÚNICAMENTE con un JSON así (sin texto adicional):\n\n{\"tool\":\"verificar_disponibilidad\",\"args\":{\"fecha\":\"2026-05-27\",\"hora\":\"10:00\"}}\n\n{\"tool\":\"crear_cita\",\"args\":{\"nombre\":\"Ana Pérez\",\"telefono\":\"+573001234567\",\"ciudad\":\"Medellín\",\"barrio\":\"El Poblado\",\"direccion\":\"Cra 43A #5-15\",\"sueros\":[{\"nombre\":\"Energía & Vitalidad\",\"cantidad\":1,\"precio\":180000}],\"total\":180000,\"fecha\":\"2026-05-27\",\"hora\":\"10:00\",\"notas\":\"Sin alergias\"}}\n\n{\"tool\":\"derivar_humano\",\"args\":{\"motivo\":\"Cliente con reclamo médico\"}}\n\nCuándo usar cada herramienta:\n- verificar_disponibilidad: ANTES de proponer un horario al cliente.\n- crear_cita: SOLO cuando el cliente confirme explícitamente todos los datos.\n- derivar_humano: quejas, reclamos médicos serios, situaciones fuera de tu alcance.\n\nPara TODO lo demás, responde con texto normal en WhatsApp.\n\nEJEMPLOS:\n\nUsuario: hola\nTú: ¡Hola! 💧 Soy GottaBot de *GottaVital*. Aplicamos sueros intravenosos a domicilio en todo el Área Metro. ¿Qué te interesa: energía, defensas, hidratación, belleza, recuperación deportiva o claridad mental?\n\nUsuario: cuánto vale el de energía\nTú: El ⚡ *Energía & Vitalidad* cuesta *$180.000* e incluye Complejo B, Magnesio y Taurina. Domicilio gratis y la sesión dura unos 45 min. ¿Te lo agendo?\n\nUsuario: sí mañana 3pm en envigado\nTú: {\"tool\":\"verificar_disponibilidad\",\"args\":{\"fecha\":\"2026-05-27\",\"hora\":\"15:00\"}}\n\nUsuario: tengo hipertensión, ¿me sirve?\nTú: Buena pregunta 👌 Esa decisión la toma nuestro enfermero al evaluarte (revisa tensión antes de aplicar). ¿Te agendo una valoración? Si no aplica, no te cobramos.`;\n\nreturn [{ json: { systemPrompt, userMessage: $('Normalizar entrada').first().json.message } }];"
+      },
+      "id": "system-prompt",
+      "name": "System Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 520]
+    },
+    {
+      "parameters": {
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer TU_GROQ_API_KEY_AQUI" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"temperature\": 0.4,\n  \"max_tokens\": 800,\n  \"messages\": [\n    { \"role\": \"system\", \"content\": {{ JSON.stringify($json.systemPrompt) }} },\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json.userMessage) }} }\n  ]\n}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "groq-call",
+      "name": "Groq Llama 3.3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1080, 520],
+      "notes": "REEMPLAZAR TU_GROQ_API_KEY_AQUI por tu key real de console.groq.com"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Detecta si la respuesta es texto normal o una tool call\nconst response = $input.first().json;\nconst content = response.choices?.[0]?.message?.content || '';\n\nif (!content) {\n  return [{ json: { type: 'text', text: 'Disculpa, hubo un problema. ¿Puedes repetir?' } }];\n}\n\n// Intenta parsear como JSON tool call\nconst trimmed = content.trim();\nif (trimmed.startsWith('{') && trimmed.includes('\"tool\"')) {\n  try {\n    // Extrae el primer objeto JSON válido\n    const match = trimmed.match(/\\{[\\s\\S]*?\\}(?=\\s*$|\\s*[^,])/);\n    const jsonStr = match ? match[0] : trimmed;\n    const parsed = JSON.parse(jsonStr);\n    \n    if (parsed.tool && parsed.args) {\n      return [{\n        json: {\n          type: 'tool_call',\n          toolName: parsed.tool,\n          toolArgs: parsed.args\n        }\n      }];\n    }\n  } catch(e) {\n    // No era JSON válido, lo tratamos como texto\n  }\n}\n\nreturn [{ json: { type: 'text', text: content } }];"
+      },
+      "id": "parse-response",
+      "name": "Parsear respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 520]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.toolName }}",
+                    "rightValue": "verificar_disponibilidad",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "verificar"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.toolName }}",
+                    "rightValue": "crear_cita",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "crear"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.toolName }}",
+                    "rightValue": "derivar_humano",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "derivar"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "text",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "texto"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "router",
+      "name": "Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1520, 520]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "getAll",
+        "calendar": { "__rl": true, "value": "primary", "mode": "list" },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ new Date($json.toolArgs.fecha + 'T' + $json.toolArgs.hora + ':00-05:00').toISOString() }}",
+          "timeMax": "={{ new Date(new Date($json.toolArgs.fecha + 'T' + $json.toolArgs.hora + ':00-05:00').getTime() + 90*60*1000).toISOString() }}"
+        }
+      },
+      "id": "gcal-check",
+      "name": "GCal: Verificar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [1740, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "const events = $input.all();\nconst libre = events.length === 0 || !events[0].json.id;\nconst args = $('Parsear respuesta').first().json.toolArgs;\n\nconst horaTxt = args.hora;\nconst fechaTxt = new Date(args.fecha + 'T00:00:00-05:00').toLocaleDateString('es-CO',\n  { weekday:'long', day:'numeric', month:'long', timeZone:'America/Bogota' });\n\nconst respuesta = libre\n  ? `¡Perfecto! El *${fechaTxt}* a las *${horaTxt}* está disponible ✅\\n\\nPara reservarte necesito algunos datos. ¿Me compartes tu *nombre completo*?`\n  : `Esa franja ya está reservada 😕 ¿Te sirve una hora más temprano o más tarde el mismo día? También puedo proponerte el día siguiente a la misma hora.`;\n\nreturn [{ json: { texto: respuesta } }];"
+      },
+      "id": "disp-response",
+      "name": "Respuesta disponibilidad",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1960, 280]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": { "__rl": true, "value": "primary", "mode": "list" },
+        "start": "={{ $json.toolArgs.fecha }}T{{ $json.toolArgs.hora }}:00",
+        "end": "={{ new Date(new Date($json.toolArgs.fecha + 'T' + $json.toolArgs.hora + ':00-05:00').getTime() + 60*60*1000).toISOString().slice(0,19) }}",
+        "additionalFields": {
+          "summary": "={{ '💧 ' + $json.toolArgs.nombre + ' — ' + $json.toolArgs.sueros.map(s => s.nombre).join(', ') }}",
+          "description": "={{ 'Cliente: ' + $json.toolArgs.nombre + '\\nTel: ' + $json.toolArgs.telefono + '\\nDirección: ' + $json.toolArgs.direccion + ', ' + $json.toolArgs.barrio + ', ' + $json.toolArgs.ciudad + '\\n\\nSueros:\\n' + $json.toolArgs.sueros.map(s => '• ' + s.nombre + ' x' + s.cantidad).join('\\n') + '\\n\\nTotal: $' + ($json.toolArgs.total || 0).toLocaleString('es-CO') + '\\n\\nNotas: ' + ($json.toolArgs.notas || 'Ninguna') }}",
+          "location": "={{ $json.toolArgs.direccion + ', ' + $json.toolArgs.barrio + ', ' + $json.toolArgs.ciudad }}",
+          "timeZone": "America/Bogota"
+        }
+      },
+      "id": "gcal-create",
+      "name": "GCal: Crear cita",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [1740, 460]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REEMPLAZAR_ID_SHEET", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Citas", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_creacion": "={{ new Date().toISOString() }}",
+            "fecha_cita": "={{ $('Parsear respuesta').first().json.toolArgs.fecha }}",
+            "hora_cita": "={{ $('Parsear respuesta').first().json.toolArgs.hora }}",
+            "nombre": "={{ $('Parsear respuesta').first().json.toolArgs.nombre }}",
+            "telefono": "={{ $('Parsear respuesta').first().json.toolArgs.telefono }}",
+            "ciudad": "={{ $('Parsear respuesta').first().json.toolArgs.ciudad }}",
+            "barrio": "={{ $('Parsear respuesta').first().json.toolArgs.barrio }}",
+            "direccion": "={{ $('Parsear respuesta').first().json.toolArgs.direccion }}",
+            "sueros": "={{ $('Parsear respuesta').first().json.toolArgs.sueros.map(s => s.nombre + ' x' + s.cantidad).join(', ') }}",
+            "total": "={{ $('Parsear respuesta').first().json.toolArgs.total }}",
+            "notas": "={{ $('Parsear respuesta').first().json.toolArgs.notas || '' }}",
+            "estado": "Confirmada",
+            "fuente": "={{ $('Normalizar entrada').first().json.source }}",
+            "gcal_event_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "sheets-append",
+      "name": "Sheets: Registrar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1960, 460]
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $('Parsear respuesta').first().json.toolArgs;\nconst fechaTxt = new Date(args.fecha + 'T00:00:00-05:00').toLocaleDateString('es-CO',\n  { weekday:'long', day:'numeric', month:'long', timeZone:'America/Bogota' });\nconst total = (args.total || args.sueros.reduce((s,x)=>s+(x.precio||0)*x.cantidad,0)).toLocaleString('es-CO');\n\nconst texto = `¡Listo, ${args.nombre.split(' ')[0]}! 🎉\\n\\n*Tu cita está confirmada* ✅\\n\\n📅 ${fechaTxt}\\n⏰ ${args.hora}\\n📍 ${args.direccion}, ${args.barrio}\\n💧 ${args.sueros.map(s => s.nombre + (s.cantidad>1?' x'+s.cantidad:'')).join(', ')}\\n💰 Total: $${total}\\n\\nTe enviaremos un recordatorio una hora antes. ¿Algo más en lo que pueda ayudarte?`;\n\nreturn [{ json: { texto } }];"
+      },
+      "id": "confirm-text",
+      "name": "Texto confirmación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2180, 460]
+    },
+    {
+      "parameters": {
+        "jsCode": "const motivo = $('Parsear respuesta').first().json.toolArgs.motivo;\nconst texto = `Te paso con una persona de nuestro equipo en breve 🤝\\n\\nMientras tanto, si es urgente puedes llamarnos al *+57 322 562 5668*.`;\nreturn [{ json: { texto, motivo } }];"
+      },
+      "id": "derivar-text",
+      "name": "Texto derivación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 640]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Unifica todas las ramas en un solo nodo de envío\nconst items = $input.all();\nconst texto = items[0].json.texto || items[0].json.text || 'Disculpa, hubo un problema. ¿Puedes repetir?';\nconst from = $('Normalizar entrada').first().json.from;\nconst source = $('Normalizar entrada').first().json.source;\nreturn [{ json: { texto, from, source } }];"
+      },
+      "id": "merge-text",
+      "name": "Unificar respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2400, 520]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "whatsapp",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "is-whatsapp",
+      "name": "¿Es WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2620, 520]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://evolution:8080/message/sendText/gottavital",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "TU_EVOLUTION_API_KEY_AQUI" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"number\": {{ JSON.stringify($json.from) }},\n  \"text\": {{ JSON.stringify($json.texto) }}\n}",
+        "options": {}
+      },
+      "id": "send-wa",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2840, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\":\"ok\", \"reply\": {{ JSON.stringify($('Unificar respuesta').first().json.texto) }} }"
+      },
+      "id": "final-response",
+      "name": "Respuesta HTTP",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [3060, 520]
+    }
+  ],
+  "connections": {
+    "Webhook Entrada": {
+      "main": [[{ "node": "Normalizar entrada", "type": "main", "index": 0 }]]
+    },
+    "Normalizar entrada": {
+      "main": [[{ "node": "¿Saltar?", "type": "main", "index": 0 }]]
+    },
+    "¿Saltar?": {
+      "main": [
+        [{ "node": "Respuesta vacía", "type": "main", "index": 0 }],
+        [{ "node": "System Prompt", "type": "main", "index": 0 }]
+      ]
+    },
+    "System Prompt": {
+      "main": [[{ "node": "Groq Llama 3.3", "type": "main", "index": 0 }]]
+    },
+    "Groq Llama 3.3": {
+      "main": [[{ "node": "Parsear respuesta", "type": "main", "index": 0 }]]
+    },
+    "Parsear respuesta": {
+      "main": [[{ "node": "Router", "type": "main", "index": 0 }]]
+    },
+    "Router": {
+      "main": [
+        [{ "node": "GCal: Verificar", "type": "main", "index": 0 }],
+        [{ "node": "GCal: Crear cita", "type": "main", "index": 0 }],
+        [{ "node": "Texto derivación", "type": "main", "index": 0 }],
+        [{ "node": "Unificar respuesta", "type": "main", "index": 0 }]
+      ]
+    },
+    "GCal: Verificar": {
+      "main": [[{ "node": "Respuesta disponibilidad", "type": "main", "index": 0 }]]
+    },
+    "Respuesta disponibilidad": {
+      "main": [[{ "node": "Unificar respuesta", "type": "main", "index": 0 }]]
+    },
+    "GCal: Crear cita": {
+      "main": [[{ "node": "Sheets: Registrar", "type": "main", "index": 0 }]]
+    },
+    "Sheets: Registrar": {
+      "main": [[{ "node": "Texto confirmación", "type": "main", "index": 0 }]]
+    },
+    "Texto confirmación": {
+      "main": [[{ "node": "Unificar respuesta", "type": "main", "index": 0 }]]
+    },
+    "Texto derivación": {
+      "main": [[{ "node": "Unificar respuesta", "type": "main", "index": 0 }]]
+    },
+    "Unificar respuesta": {
+      "main": [[{ "node": "¿Es WhatsApp?", "type": "main", "index": 0 }]]
+    },
+    "¿Es WhatsApp?": {
+      "main": [
+        [{ "node": "Enviar WhatsApp", "type": "main", "index": 0 }, { "node": "Respuesta HTTP", "type": "main", "index": 0 }],
+        [{ "node": "Respuesta HTTP", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Bogota" },
+  "pinData": {}
+}

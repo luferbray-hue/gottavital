@@ -1,0 +1,113 @@
+version: '3.8'
+
+# ============================================================
+# GottaVital - Stack local (n8n + Evolution + Postgres + Redis)
+# ============================================================
+# Las credenciales se leen del archivo .env (no incluido en git).
+# Copia .env.example a .env y rellena los valores antes de usar.
+# ============================================================
+
+services:
+  # ============================================================
+  # n8n - Plataforma de automatización
+  # ============================================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: gv-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=${TZ:-America/Bogota}
+      - TZ=${TZ:-America/Bogota}
+      - N8N_SECURE_COOKIE=false
+      - N8N_RUNNERS_ENABLED=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - gottavital
+
+  # ============================================================
+  # Evolution API - WhatsApp gateway
+  # ============================================================
+  evolution:
+    image: atendai/evolution-api:latest
+    container_name: gv-evolution
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_TYPE=http
+      - SERVER_PORT=8080
+      - SERVER_URL=http://localhost:8080
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
+      - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - DATABASE_CONNECTION_CLIENT_NAME=evolution_exchange
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
+      - DATABASE_SAVE_MESSAGE_UPDATE=true
+      - DATABASE_SAVE_DATA_CONTACTS=true
+      - DATABASE_SAVE_DATA_CHATS=true
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/6
+      - CACHE_REDIS_PREFIX_KEY=evolution
+      - CACHE_LOCAL_ENABLED=false
+      - LOG_LEVEL=ERROR,WARN,INFO
+      - DEL_INSTANCE=false
+      - CONFIG_SESSION_PHONE_CLIENT=Gottavital
+      - CONFIG_SESSION_PHONE_NAME=Chrome
+      - QRCODE_LIMIT=30
+    volumes:
+      - evolution_instances:/evolution/instances
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - gottavital
+
+  # ============================================================
+  # PostgreSQL - Base de datos para Evolution
+  # ============================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: gv-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gottavital
+
+  # ============================================================
+  # Redis - Cache para Evolution
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: gv-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - gottavital
+
+volumes:
+  n8n_data:
+  evolution_instances:
+  postgres_data:
+  redis_data:
+
+networks:
+  gottavital:
+    driver: bridge

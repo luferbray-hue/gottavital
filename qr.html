@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QR GottaVital</title>
+  <style>
+    body { background:#0d0d0d; color:#fff; font-family:sans-serif; text-align:center; padding:40px; }
+    img { background:#fff; padding:20px; border-radius:12px; max-width:400px; }
+    h1 { color:#22c55e; }
+    button { background:#22c55e; color:#000; padding:12px 24px; border:none; border-radius:8px; font-size:16px; cursor:pointer; margin-top:20px; }
+    input { background:#1a1a1a; color:#fff; border:1px solid #333; padding:10px; border-radius:6px; width:300px; }
+    label { display:block; margin-top:20px; }
+    .config { margin: 30px auto; max-width: 400px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>🔗 Conectar GottaVital a WhatsApp</h1>
+  <p>Escanea este código con tu WhatsApp (Vincular dispositivo)</p>
+
+  <div class="config">
+    <label>API Key de Evolution (la de tu .env):
+      <input type="password" id="apikey" placeholder="Pega tu EVOLUTION_API_KEY" />
+    </label>
+    <label>Nombre de instancia:
+      <input type="text" id="instance" value="gottavital" />
+    </label>
+  </div>
+
+  <div id="qr"></div>
+  <button onclick="cargar()">🔄 Generar / Refrescar QR</button>
+  <p id="status"></p>
+
+  <script>
+    // La API key se guarda en sessionStorage para no escribirla cada vez,
+    // pero NO se persiste en localStorage ni en el código (estaría en git).
+    const apikeyInput = document.getElementById('apikey');
+    const instanceInput = document.getElementById('instance');
+
+    apikeyInput.value = sessionStorage.getItem('gv_apikey') || '';
+    instanceInput.value = sessionStorage.getItem('gv_instance') || 'gottavital';
+
+    async function cargar() {
+      const apikey = apikeyInput.value.trim();
+      const instance = instanceInput.value.trim();
+
+      if (!apikey) {
+        document.getElementById('status').innerText = '⚠️ Pega la API key primero.';
+        return;
+      }
+
+      sessionStorage.setItem('gv_apikey', apikey);
+      sessionStorage.setItem('gv_instance', instance);
+
+      document.getElementById('status').innerText = 'Cargando...';
+      try {
+        const r = await fetch('http://localhost:8080/instance/connect/' + encodeURIComponent(instance), {
+          headers: { 'apikey': apikey }
+        });
+        const data = await r.json();
+        if (data.base64) {
+          document.getElementById('qr').innerHTML = '<img src="' + data.base64 + '" alt="QR" />';
+          document.getElementById('status').innerText = 'QR generado. Escanea rápido (caduca en 60s).';
+        } else {
+          document.getElementById('status').innerText = 'Respuesta inesperada: ' + JSON.stringify(data);
+        }
+      } catch(e) {
+        document.getElementById('status').innerText = 'Error: ' + e.message;
+      }
+    }
+
+    // Auto-refresca cada 50s solo si ya hay API key
+    setInterval(() => { if (apikeyInput.value.trim()) cargar(); }, 50000);
+  </script>
+</body>
+</html>
